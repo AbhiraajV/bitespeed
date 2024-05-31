@@ -15,20 +15,21 @@ datasource db {
 
 // A primary contact can have N secondaries but each secondary can have only 1 primary.
 model Contact {
-  id             Int       @id @default(autoincrement())
-  phoneNumber    String?
-  email          String?
-  linkedId       Int?
-  linkPrecedence String // LinkPrecedence
-  createdAt      DateTime  @default(now())
-  updatedAt      DateTime  @updatedAt
-  deletedAt      DateTime?
+  id          Int      @id @default(autoincrement())
+  phoneNumber String?
+  email       String?
+  linkedId    Int?
+  linkPrecedence String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  deletedAt   DateTime?
 
-  MyPrimary Contact?  @relation("PrimarySecondaryOneToManyMap", fields: [linkedId], references: [id])
-  Secondary Contact[] @relation("PrimarySecondaryOneToManyMap")
+  MyPrimary   Contact?   @relation("MAP", fields: [linkedId], references: [id], onDelete: SetNull)
+  Secondary   Contact[]   @relation("MAP") // Remove fields, references, and onDelete
 
   @@unique([email, phoneNumber])
 }
+
 
 // Prisma SQLite does not support enum so using plain string and validating on server-side
 // enum LinkPrecedence {
